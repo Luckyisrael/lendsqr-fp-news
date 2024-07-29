@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setUser, logout, User } from 'redux/authSlice';
 
 GoogleSignin.configure({
-  webClientId: 'AIzaSyBKYS4FCNXqNZrMGQH-aodSNetgqSnI7EI', 
+  webClientId: process.env.EXPO_PUBLIC_GOOGLE_CLIEINT, 
 });
 
 export const signUpWithEmail = async (email: string, password: string): Promise<User> => {

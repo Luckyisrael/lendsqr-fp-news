@@ -5,13 +5,13 @@ import '@react-native-firebase/messaging';
 import '@react-native-firebase/perf';
 
 const firebaseConfig = {
-  apiKey: 'AIzaSyC7es_x8jqwyU4SgBR5zgYmm_Kb5A-6M6U',
-  authDomain: 'lendsqr-fp-news-7ad95.firebaseapp.com',
+  apiKey: process.env.EXPO_PUBLIC_GOOGLE_API_KEY,
+  authDomain: process.env.EXPO_PUBLIC_GOOGLE_AUTH_DOMAIN,
   projectId: 'lendsqr-fp-news-7ad95',
-  storageBucket: 'lendsqr-fp-news-7ad95.appspot.com',
-  messagingSenderId: '162726264352',
+  storageBucket: process.env.EXPO_PUBLIC_GOOGLE_STORAGE_BUCKET,
+  messagingSenderId: process.env.EXPO_PUBLIC_GOOGLE_MESSAGING_SENDER,
   appId: '1:162726264352:web:e3032b688c5afec4ad4645',
-  measurementId: 'G-G2NQYJZ0VB',
+  measurementId: process.env.EXPO_PUBLIC_GOOGLE_MEASUREMENT_ID,
 };
 
 if (!firebase.apps.length) {

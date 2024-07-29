@@ -1,14 +1,14 @@
 import { Article } from "types";
 
-const API_KEY = '37beb35f436a40b1a1f5c8962e5ca159';
-const BASE_URL = 'https://newsapi.org';
+const API_KEY = process.env.EXPO_PUBLIC_API_KEY;
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL;
 
 export const fetchNews = async () => {
   try {
     const response = await fetch(`${BASE_URL}/v2/top-headlines?country=us&apiKey=${API_KEY}`, {
       method: 'GET',
       headers: {
-        'x-rapidapi-key': '6291f375d1msh8e21ca58ede2ccbp1e2bf7jsne99829914425',
+        'X-Api-Key': '6291f375d1msh8e21ca58ede2ccbp1e2bf7jsne99829914425',
         'x-rapidapi-host': 'newscatcher.p.rapidapi.com'
       }
     });  
