@@ -7,10 +7,6 @@ export const fetchNews = async () => {
   try {
     const response = await fetch(`${BASE_URL}/v2/top-headlines?country=us&apiKey=${API_KEY}`, {
       method: 'GET',
-      headers: {
-        'X-Api-Key': '6291f375d1msh8e21ca58ede2ccbp1e2bf7jsne99829914425',
-        'x-rapidapi-host': 'newscatcher.p.rapidapi.com'
-      }
     });  
     if (!response.ok) {
       throw new Error('Network response was not ok');

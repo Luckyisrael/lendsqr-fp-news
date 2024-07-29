@@ -1,4 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import CategorizedNewsComponent from 'components/categorizedNewsComponent';
 import NewsItem from 'components/newsItem';
 import { fontSize } from 'constants/theme';
@@ -6,7 +7,7 @@ import { trackScreenPerformance } from 'helpers/firebaseConfig';
 import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { Screen, Text } from 'lib';
-import { moderateScale } from 'lib/ResponsiveSize';
+import { moderateScale, verticalScale } from 'lib/ResponsiveSize';
 import React, { useRef, useEffect } from 'react';
 import {
   Image,
@@ -19,57 +20,23 @@ import {
   Touchable,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from 'react-native';
 import { fetchNewsAsync } from 'redux/newsSlice';
-import { Article } from 'types';
 
 const logo = require('../../assets/icon.png');
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = SCREEN_WIDTH * 0.8;
 
-const newsItems = [
-  {
-    id: '1',
-    title: 'Breaking News 1',
-    details: 'This is the first news item with some details about the story.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-  },
-  {
-    id: '2',
-    title: 'Tech Update',
-    details: 'Latest developments in the world of technology and innovation.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-  },
-  {
-    id: '3',
-    title: 'Sports Highlight',
-    details: 'Exciting results from recent sports events and tournaments.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-  },
-  // Add more items as needed
-];
-
 const HomeScreen: React.FC = () => {
   const scrollX = useRef(new Animated.Value(0)).current;
   const dispatch = useAppDispatch();
+  const navigation = useNavigation();
   const { articles, status, error } = useAppSelector((state) => state.news);
 
   useEffect(() => {
-    const stopTracking = trackScreenPerformance('SomeScreen');
+    const stopTracking = trackScreenPerformance('HomeScreen');
     return stopTracking;
-  }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      scrollX.setValue(0);
-      Animated.timing(scrollX, {
-        toValue: newsItems.length * ITEM_WIDTH,
-        duration: 20000,
-        useNativeDriver: true,
-      }).start();
-    }, 21000);
-
-    return () => clearInterval(timer);
   }, []);
 
   useEffect(() => {
@@ -78,13 +45,33 @@ const HomeScreen: React.FC = () => {
     }
   }, [status, dispatch]);
 
+  useEffect(() => {
+    const timer = setInterval(() => {
+      scrollX.setValue(0);
+      Animated.timing(scrollX, {
+        toValue: articles.length * ITEM_WIDTH,
+        duration: 20000,
+        useNativeDriver: true,
+      }).start();
+    }, 21000);
+
+    return () => clearInterval(timer);
+  }, [articles]);
+
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const scrollPosition = event.nativeEvent.contentOffset.x;
     scrollX.setValue(scrollPosition);
   };
 
+  const filteredArticles = articles.filter((article) => article.urlToImage);
+
+  const navigateToNewsDetail = (article) => {
+    navigation.navigate('NewsDetail', { article });
+  };
   if (status === 'loading') {
-    console.log('Loading');
+    return(
+      <ActivityIndicator size='large' />
+    )
   }
 
   if (status === 'failed') {
@@ -119,7 +106,7 @@ const HomeScreen: React.FC = () => {
             onScroll={handleScroll}
             scrollEventThrottle={16}
             contentContainerStyle={styles.scrollViewContent}>
-            {newsItems.map((item, index) => {
+            {filteredArticles.map((item, index) => {
               const inputRange = [
                 (index - 1) * ITEM_WIDTH,
                 index * ITEM_WIDTH,
@@ -133,15 +120,19 @@ const HomeScreen: React.FC = () => {
 
               return (
                 <Animated.View
-                  key={item.id}
+                  key={item.url}
                   style={[styles.itemContainer, { transform: [{ scale }] }]}>
-                  <NewsItem title={item.title} details={item.details} imageUrl={item.imageUrl} />
+                  <TouchableOpacity onPress={() => navigateToNewsDetail(item)}>
+                    <NewsItem title={item.title} url={item.url} urlToImage={item.urlToImage} />
+                  </TouchableOpacity>
                 </Animated.View>
               );
             })}
           </ScrollView>
         </View>
-        <View style={styles.categorizedNews}>{/* <CategorizedNewsComponent /> */}</View>
+        <View style={styles.categorizedNews}>
+          <CategorizedNewsComponent />
+        </View>
       </View>
     </Screen>
   );
@@ -176,6 +167,7 @@ const styles = StyleSheet.create({
   },
   itemContainer: {
     width: ITEM_WIDTH,
+    height: verticalScale(300)
   },
   newsHeader: {
     flexDirection: 'row',

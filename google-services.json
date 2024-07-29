@@ -12,7 +12,20 @@
           "package_name": "com.luckyisrael.pfnews"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "42551340623-b7o0ijohtmb8tafo5ri0us3vln5n7n0g.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.luckyisrael.pfnews",
+            "certificate_hash": "fd965c21cc10ea74a7cbcbe19788637e4a58ebf6"
+          }
+        },
+        {
+          "client_id": "42551340623-00nbv24g0dtjejarpb3qqmg8mbqslj71.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBKYS4FCNXqNZrMGQH-aodSNetgqSnI7EI"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "42551340623-00nbv24g0dtjejarpb3qqmg8mbqslj71.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "42551340623-jt71599feqi1vknnf7mea8v2sviqd8vl.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.luckyisrael.pfnews"
+              }
+            }
+          ]
         }
       }
     }

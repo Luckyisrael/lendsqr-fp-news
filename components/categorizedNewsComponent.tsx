@@ -1,10 +1,10 @@
+import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { colors } from 'constants/theme';
 import { useAppDispatch } from 'hooks/useAppDispatch';
 import { useAppSelector } from 'hooks/useAppSelector';
 import { Text } from 'lib';
 import { moderateScale } from 'lib/ResponsiveSize';
-import React, { useState, useEffect } from 'react';
 import {
   View,
   ScrollView,
@@ -12,84 +12,34 @@ import {
   StyleSheet,
   Dimensions,
   ImageBackground,
+  ActivityIndicator,
 } from 'react-native';
 import { fetchNewsAsync } from 'redux/newsSlice';
-import { Article } from '../types';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = SCREEN_WIDTH * 0.45; 
 const ITEM_HEIGHT = ITEM_WIDTH * 1.2;
 
-interface NewsItem {
-  id: string;
+interface Article {
+  source: {
+    id: string;
+    name: string;
+  };
+  author: string;
   title: string;
-  details: string;
-  imageUrl: string;
-  category: string;
+  description: string;
+  url: string;
+  urlToImage: string;
+  publishedAt: string;
+  content: string;
 }
 
-const categories = ['Lendsqr', 'Health', 'Technology', 'Finance', 'Space'];
-
-const newsItems: NewsItem[] = [
-  {
-    id: '1',
-    title: 'Lendsqr Expands Operations',
-    details: 'Lendsqr announces expansion into new markets.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-    category: 'Lendsqr',
-  },
-  {
-    id: '2',
-    title: 'Lendsqr Expands Operations',
-    details: 'Lendsqr announces expansion into new markets.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-    category: 'Lendsqr',
-  },
-  {
-    id: '3',
-    title: 'Lendsqr Expands Operations',
-    details: 'Lendsqr announces expansion into new markets.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-    category: 'Lendsqr',
-  },
-  {
-    id: '4',
-    title: 'New Health Guidelines',
-    details: 'WHO releases new health guidelines for pandemic prevention.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-    category: 'Health',
-  },
-  {
-    id: '5',
-    title: 'New Health Guidelines',
-    details: 'WHO releases new health guidelines for pandemic prevention.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-    category: 'Health',
-  },
-  {
-    id: '6',
-    title: 'New Health Guidelines',
-    details: 'WHO releases new health guidelines for pandemic prevention.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-    category: 'Health',
-  },
-  {
-    id: '7',
-    title: 'New Health Guidelines',
-    details: 'WHO releases new health guidelines for pandemic prevention.',
-    imageUrl: 'https://via.placeholder.com/400x500',
-    category: 'Health',
-  },
-  // Add more items for each category...
-];
-
 const CategorizedNewsComponent: React.FC = () => {
-  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+  const [selectedSource, setSelectedSource] = useState('All');
+  const [sources, setSources] = useState<string[]>(['All']);
   const navigation = useNavigation();
   const dispatch = useAppDispatch();
   const { articles, status, error } = useAppSelector((state) => state.news);
-
-  const filteredNews = newsItems.filter((item) => item.category === selectedCategory);
 
   useEffect(() => {
     if (status === 'idle') {
@@ -97,24 +47,33 @@ const CategorizedNewsComponent: React.FC = () => {
     }
   }, [status, dispatch]);
 
+  useEffect(() => {
+    if (articles.length > 0) {
+      const articlesWithImages = articles.filter(article => article.urlToImage);
+      const uniqueSources = ['All', ...new Set(articlesWithImages.map(article => article.source.name))];
+      setSources(uniqueSources);
+    }
+  }, [articles]);
+
+  const filteredNews = selectedSource === 'All'
+    ? articles.filter(item => item.urlToImage)
+    : articles.filter(item => item.source.name === selectedSource && item.urlToImage);
+
   if (status === 'loading') {
-    return <div>Loading...</div>;
+    return <ActivityIndicator size='large' />;
   }
 
   if (status === 'failed') {
-    return <div>Error: {error}</div>;
+    return <Text>Error: {error}</Text>;
   }
 
-  console.log('Articles: ', articles)
-
-
-  const renderNewsItem = (item: NewsItem) => (
+  const renderNewsItem = (item: Article) => (
     <TouchableOpacity
-      key={item.id}
+      key={item.url}
       style={styles.newsItem}
-      onPress={() => navigation.navigate('NewsDetail', { ariticles: item })}>
+      onPress={() => navigation.navigate('NewsDetail', { article: item })}>
       <ImageBackground
-        source={{ uri: item.imageUrl }}
+        source={{ uri: item.urlToImage }} 
         style={styles.image}
         imageStyle={styles.imageStyle}>
         <View style={styles.overlay}>
@@ -123,7 +82,7 @@ const CategorizedNewsComponent: React.FC = () => {
           </View>
           <View style={styles.detailsContainer}>
             <Text style={styles.details} numberOfLines={2}>
-              {item.details}
+              {item.description}
             </Text>
           </View>
         </View>
@@ -137,20 +96,20 @@ const CategorizedNewsComponent: React.FC = () => {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.categoriesContainer}>
-        {categories.map((category) => (
+        {sources.map((source) => (
           <TouchableOpacity
-            key={category}
+            key={source}
             style={[
               styles.categoryButton,
-              selectedCategory === category && styles.selectedCategory,
+              selectedSource === source && styles.selectedCategory,
             ]}
-            onPress={() => setSelectedCategory(category)}>
+            onPress={() => setSelectedSource(source)}>
             <Text
               style={[
                 styles.categoryText,
-                selectedCategory === category && styles.selectedCategoryText,
+                selectedSource === source && styles.selectedCategoryText,
               ]}>
-              {category}
+              {source}
             </Text>
           </TouchableOpacity>
         ))}
@@ -162,8 +121,12 @@ const CategorizedNewsComponent: React.FC = () => {
   );
 };
 
+export default CategorizedNewsComponent;
+
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+  },
   categoriesContainer: {
     flexGrow: 0,
     marginBottom: 10,

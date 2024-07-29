@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { Article } from '../types';
 import { fetchNews } from 'services/api';
+
+import { Article } from '../types';
 
 interface NewsState {
   articles: Article[];
@@ -14,18 +15,17 @@ const initialState: NewsState = {
   error: null,
 };
 
-export const fetchNewsAsync = createAsyncThunk<
-  Article[],
-  void,
-  { rejectValue: string }
->('news/fetchNews', async (_, { rejectWithValue }) => {
-  try {
-    const response = await fetchNews();
-    return response.articles;
-  } catch (error) {
-    return rejectWithValue((error as Error).message);
+export const fetchNewsAsync = createAsyncThunk<Article[], void, { rejectValue: string }>(
+  'news/fetchNews',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetchNews();
+      return response.articles;
+    } catch (error) {
+      return rejectWithValue((error as Error).message);
+    }
   }
-});
+);
 
 const newsSlice = createSlice({
   name: 'news',

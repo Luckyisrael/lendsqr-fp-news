@@ -1,38 +1,46 @@
 import React from 'react';
-import { View, ImageBackground, StyleSheet, Dimensions } from 'react-native';
+import { View, ImageBackground, StyleSheet, Dimensions, Touchable, TouchableOpacity } from 'react-native';
 import { Text } from 'lib';
 import { fontSize } from 'constants/theme';
 
 interface NewsItemProps {
+  source: {
+    id: string;
+    name: string;
+  };
+  author: string;
   title: string;
-  details: string;
-  imageUrl: string;
+  description: string;
+  url: string;
+  urlToImage: string;
+  publishedAt: string;
+  content: string;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const ITEM_WIDTH = SCREEN_WIDTH * 0.8;
 const ITEM_HEIGHT = ITEM_WIDTH * 1.2;
 
-const NewsItem = ({ title, details, imageUrl }: NewsItemProps) => {
+const NewsItem = ({ title, url, urlToImage }: NewsItemProps) => {
   return (
-    <View style={styles.container}>
+    <TouchableOpacity style={styles.container}>
       <ImageBackground
-        source={{ uri: imageUrl }}
+        source={{ uri: urlToImage }}
         style={styles.image}
         imageStyle={styles.imageStyle}
       >
         <View style={styles.overlay}>
           <View style={styles.titleContainer}>
-            <Text family='bold' size={fontSize.extraLarge} style={styles.title}>{title}</Text>
+            <Text family='bold' size={fontSize.large} style={styles.title}>{title}</Text>
           </View>
           <View style={styles.detailsContainer}>
-            <Text style={styles.details} numberOfLines={2} family='light' size={fontSize.medium} >
-              {details}
+            <Text style={styles.details} numberOfLines={2} family='light' size={fontSize.extraSmall} >
+              {url}
             </Text>
           </View>
         </View>
       </ImageBackground>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -70,7 +78,8 @@ const styles = StyleSheet.create({
     textShadowRadius: 10,
   },
   detailsContainer: {
-    padding: 10,
+    padding: 5,
+    backgroundColor: 'grey'
   },
   details: {
     color: 'white'
