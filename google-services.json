@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "42551340623",
+    "project_id": "lendsqr-fp-news-dd7b1",
+    "storage_bucket": "lendsqr-fp-news-dd7b1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:42551340623:android:51fe92cf08a8f2b771043a",
+        "android_client_info": {
+          "package_name": "com.luckyisrael.pfnews"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBKYS4FCNXqNZrMGQH-aodSNetgqSnI7EI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
